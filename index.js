@@ -49,9 +49,38 @@ async function run() {
       res.send(result);
     });
     // admin api
+    app.get("/employee/:owner", async (req, res) => {
+      const owner = req.params.owner;
+      const filter = { workAt: owner };
+      const result = await userCollection.find(filter).toArray();
+      res.send(result);
+    });
     app.get("/assets", async (req, res) => {
       const assets = await assetCollection.find().toArray();
       res.send(assets);
+    });
+    app.get("/asset/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await assetCollection.findOne(filter);
+      res.send(result);
+    });
+    app.put("/asset-update/:id", async (req, res) => {
+      const id = req.params.id;
+      const asset = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateAsset = {
+        $set: {
+          ...asset,
+        },
+      };
+      const result = await assetCollection.updateOne(
+        filter,
+        updateAsset,
+        options
+      );
+      res.send(result);
     });
     app.post("/add-asset", async (req, res) => {
       const asset = req.body;
@@ -62,6 +91,24 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const result = await assetCollection.deleteOne(filter);
+      res.send(result);
+    });
+    app.put("/add-remove-team/:id", async (req, res) => {
+      const id = req.params.id;
+      const user = req.body;
+      console.log(user, id);
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateUser = {
+        $set: {
+          ...user,
+        },
+      };
+      const result = await userCollection.updateOne(
+        filter,
+        updateUser,
+        options
+      );
       res.send(result);
     });
     // Send a ping to confirm a successful connection
