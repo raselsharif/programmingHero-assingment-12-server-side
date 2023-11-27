@@ -48,6 +48,25 @@ async function run() {
       const result = await userCollection.insertOne(user);
       res.send(result);
     });
+    // update user
+    app.put("/update-profile/:id", async (req, res) => {
+      const id = req.params.id;
+      const user = req.body;
+      console.log(user, id);
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateUser = {
+        $set: {
+          ...user,
+        },
+      };
+      const result = await userCollection.updateOne(
+        filter,
+        updateUser,
+        options
+      );
+      res.send(result);
+    });
     // admin api
     app.get("/employee/:owner", async (req, res) => {
       const owner = req.params.owner;
