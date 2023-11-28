@@ -30,6 +30,7 @@ async function run() {
     const database = client.db("assets-management");
     const userCollection = database.collection("users");
     const assetCollection = database.collection("assets");
+    const customAssetCollection = database.collection("customAssets");
 
     // user api's
     app.get("/users", async (req, res) => {
@@ -67,6 +68,18 @@ async function run() {
       );
       res.send(result);
     });
+    // add custom asset
+    // app.post("/add-custom-asset", async (req, res) => {
+    //   const asset = req.body;
+    //   const result = await customAssetCollection.insertOne(asset);
+    //   res.send(result);
+    // });
+    // // get custom assets
+    // app.get("/custom-assets", async (req, res) => {
+    //   const assets = await customAssetCollection.find().toArray();
+    //   res.send(assets);
+    // });
+
     // admin api
     app.get("/employee/:owner", async (req, res) => {
       const owner = req.params.owner;
