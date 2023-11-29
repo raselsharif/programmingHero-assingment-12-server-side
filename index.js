@@ -4,6 +4,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 // middlewares
@@ -30,8 +31,23 @@ async function run() {
     const database = client.db("assets-management");
     const userCollection = database.collection("users");
     const assetCollection = database.collection("assets");
-    const customAssetCollection = database.collection("customAssets");
+    // const customAssetCollection = database.collection("customAssets");
 
+    // payment stripe
+
+    app.post("/create-payment-intent", async (req, res) => {
+      const { price } = req.body;
+      const amount = parseInt(price * 100);
+      console.log("amount", amount);
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: "usd",
+        payment_method_types: ["card"],
+      });
+      res.send({
+        clientSecret: paymentIntent.client_secret,
+      });
+    });
     // user api's
     app.get("/users", async (req, res) => {
       const users = await userCollection.find().toArray();
