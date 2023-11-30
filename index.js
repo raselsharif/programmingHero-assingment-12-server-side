@@ -104,7 +104,7 @@ async function run() {
       res.send(result);
     });
     app.get("/assets", async (req, res) => {
-      const assets = await assetCollection.find().toArray();
+      const assets = await assetCollection.find(req.query).toArray();
       res.send(assets);
     });
     app.get("/asset/:id", async (req, res) => {
